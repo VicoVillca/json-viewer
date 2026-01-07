@@ -1,0 +1,24 @@
+<div class="code-output">
+  
+  <!-- Solo un contenedor de scroll -->
+  <div class="json-scroll-container">
+    
+    <div *ngIf="result && parsedJson && jsonTree.length > 0">
+      <div class="json-tree">
+        <div *ngFor="let node of jsonTree" class="node-wrapper">
+          <app-json-node 
+            [node]="node"
+            (toggle)="toggleNode(node)">
+          </app-json-node>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="!result" class="empty-output">
+      <i class="pi pi-code"></i>
+      <p>Procesa código para ver el resultado</p>
+    </div>
+    
+  </div>
+  
+</div>
