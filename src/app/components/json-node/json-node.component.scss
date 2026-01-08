@@ -1,101 +1,323 @@
 .json-node {
-      font-family: 'Consolas', monospace;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    
-    .node-line {
-      padding: 4px 8px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 28px;
-    }
-    
-    .expandable {
-      cursor: pointer;
-    }
-    
-    .expandable:hover {
-      background: rgba(0, 0, 0, 0.04);
-    }
-    
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  transition: all 0.2s ease;
+}
+
+.node-line {
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  transition: background-color 0.2s;
+}
+
+.expandable {
+  cursor: pointer;
+  
+  &:hover {
+    background: rgba(100, 150, 255, 0.08);
     .toggle-icon {
-      width: 20px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: #666;
+      color: #5d6afb;
     }
+  }
+}
+
+.toggle-icon {
+  width: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #8a8a8a;
+  transition: color 0.2s;
+  
+  i {
+    font-size: 12px;
+  }
+}
+
+// Colores para CLAVES por nivel (agradables y distinguibles)
+.node-key {
+  font-weight: 600;
+  
+  // Nivel 0 (productos)
+  .json-node:not([style*="margin-left"]) & {
+    color: #9d4edd; // Lila vibrante
+  }
+  
+  // Nivel 1 (0, 1, 2 - elementos del array)
+  .json-node[style*="margin-left: 20px"] & {
+    color: #00b4d8; // Azul cian
+  }
+  
+  // Nivel 2 (id, nombre, precio, etc.)
+  .json-node[style*="margin-left: 40px"] & {
+    color: #2a9d8f; // Verde esmeralda
+  }
+  
+  // Nivel 3 (especificaciones, categorias)
+  .json-node[style*="margin-left: 60px"] & {
+    color: #e76f51; // Coral/naranja
+  }
+  
+  // Nivel 4+ (procesador, ram, etc.)
+  .json-node[style*="margin-left: 80px"] &,
+  .json-node[style*="margin-left: 100px"] & {
+    color: #f4a261; // Naranja suave
+  }
+}
+
+// Colores para VALORES por tipo de dato
+.node-value {
+  &.string-value {
+    color: #2a9d8f; // Verde esmeralda
+  }
+  
+  &.number-value {
+    color: #e76f51; // Coral
+  }
+  
+  &.boolean-value {
+    color: #9d4edd; // Lila
+    font-weight: 500;
+  }
+  
+  &.null-value {
+    color: #6c757d; // Gris
+    font-style: italic;
+  }
+  
+  &.object-value, &.array-value {
+    color: #00b4d8; // Azul cian
+    font-weight: 500;
     
-    .toggle-icon i {
+    // Contador de items cuando está colapsado
+    &::after {
+      content: attr(data-count);
       font-size: 12px;
+      color: #6c757d;
+      margin-left: 4px;
+      font-weight: normal;
+    }
+  }
+}
+
+.node-children {
+  margin-left: 20px;
+  border-left: 1px solid rgba(0, 180, 216, 0.2); // Azul cian suave
+  padding-left: 12px;
+  transition: border-color 0.3s;
+  
+  &:hover {
+    border-left-color: rgba(0, 180, 216, 0.4);
+  }
+}
+
+/* ============================================== */
+/* NUEVO: ESTILOS PARA EL CIERRE DE OBJETOS/ARRAYS */
+/* ============================================== */
+.node-closure {
+  padding-left: 20px; // Alineado con el contenido
+  margin: 2px 0;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.closure-brace {
+  color: #00b4d8; // Mismo color azul cian que los objetos/arrays
+  font-weight: bold;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+// Indicador visual para objetos/arrays expandidos
+.json-node.expanded > .node-line {
+  border-left: 3px solid rgba(157, 78, 221, 0.3); // Borde lila
+  padding-left: 5px; // Compensa el borde
+}
+
+// Alternar colores de fondo por nivel para mejor legibilidad
+.json-node {
+  &:nth-child(odd) {
+    .node-line {
+      background-color: rgba(0, 0, 0, 0.01);
+    }
+  }
+  
+  &:nth-child(even) {
+    .node-line {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+  }
+  
+  &:hover {
+    .node-line {
+      background-color: rgba(100, 150, 255, 0.05) !important;
+    }
+  }
+}
+
+/* === TEMA OSCURO (mejorado) === */
+:host-context(.dark-theme) {
+  .json-node {
+    .node-line {
+      &:hover {
+        background: rgba(100, 150, 255, 0.1) !important;
+      }
+    }
+  }
+  
+  .expandable:hover {
+    background: rgba(100, 150, 255, 0.15);
+  }
+  
+  .node-children {
+    border-left-color: rgba(100, 150, 255, 0.3);
+  }
+  
+  // CLAVES en tema oscuro
+  .node-key {
+    .json-node:not([style*="margin-left"]) & {
+      color: #bb86fc; // Lila material design
     }
     
-    .node-key {
-      color: #881391;
-      font-weight: 600;
+    .json-node[style*="margin-left: 20px"] & {
+      color: #03dac6; // Cian material
     }
     
-    .node-value {
-      &.string-value {
-        color: #1a1aa6;
-      }
-      
-      &.number-value {
-        color: #1c00cf;
-      }
-      
-      &.boolean-value {
-        color: #0d22aa;
-      }
-      
-      &.null-value {
-        color: #777;
-        font-style: italic;
-      }
-      
-      &.object-value, &.array-value {
-        color: #666;
-      }
+    .json-node[style*="margin-left: 40px"] & {
+      color: #4db6ac; // Verde azulado
     }
     
+    .json-node[style*="margin-left: 60px"] & {
+      color: #ff8a65; // Naranja claro
+    }
+    
+    .json-node[style*="margin-left: 80px"] &,
+    .json-node[style*="margin-left: 100px"] & {
+      color: #ffb74d; // Ámbar
+    }
+  }
+  
+  // VALORES en tema oscuro
+  .node-value {
+    &.string-value {
+      color: #81c784; // Verde claro
+    }
+    
+    &.number-value {
+      color: #ff8a65; // Naranja
+    }
+    
+    &.boolean-value {
+      color: #bb86fc; // Lila
+    }
+    
+    &.null-value {
+      color: #a0a0a0;
+    }
+    
+    &.object-value, &.array-value {
+      color: #4fc3f7; // Azul claro
+    }
+  }
+  
+  // CIERRE en tema oscuro
+  .closure-brace {
+    color: #4fc3f7; // Azul claro para cierres
+  }
+  
+  // Borde para expandidos en tema oscuro
+  .json-node.expanded > .node-line {
+    border-left-color: rgba(187, 134, 252, 0.4);
+  }
+}
+
+/* === TEMA CLARO ALTERNATIVO (si prefieres) === */
+:host-context(.light-theme) {
+  .node-key {
+    .json-node:not([style*="margin-left"]) & {
+      color: #7b2cbf; // Lila más oscuro
+    }
+    
+    .json-node[style*="margin-left: 20px"] & {
+      color: #0077b6; // Azul marino
+    }
+    
+    .json-node[style*="margin-left: 40px"] & {
+      color: #2d6a4f; // Verde bosque
+    }
+    
+    .json-node[style*="margin-left: 60px"] & {
+      color: #bc4749; // Rojo terracota
+    }
+    
+    .json-node[style*="margin-left: 80px"] &,
+    .json-node[style*="margin-left: 100px"] & {
+      color: #e76f51; // Coral
+    }
+  }
+  
+  .node-value {
+    &.string-value {
+      color: #2d6a4f;
+    }
+    
+    &.number-value {
+      color: #bc4749;
+    }
+    
+    &.boolean-value {
+      color: #7b2cbf;
+    }
+    
+    &.null-value {
+      color: #6c757d;
+    }
+    
+    &.object-value, &.array-value {
+      color: #0077b6;
+    }
+  }
+  
+  // CIERRE en tema claro
+  .closure-brace {
+    color: #0077b6; // Azul marino para cierres
+  }
+}
+
+/* === ANIMACIONES SUAVES === */
+.json-node {
+  .node-children {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  &.collapsing {
     .node-children {
-      margin-left: 20px;
-      border-left: 1px solid #e0e0e0;
-      padding-left: 8px;
+      animation: fadeOut 0.2s ease-in;
     }
-    
-    /* Tema oscuro */
-    :host-context(.dark-theme) {
-      .expandable:hover {
-        background: rgba(255, 255, 255, 0.08);
-      }
-      
-      .node-children {
-        border-left-color: #444;
-      }
-      
-      .node-value {
-        &.string-value {
-          color: #9cdcfe;
-        }
-        
-        &.number-value {
-          color: #b5cea8;
-        }
-        
-        &.boolean-value {
-          color: #569cd6;
-        }
-        
-        &.null-value {
-          color: #888;
-        }
-        
-        &.object-value, &.array-value {
-          color: #888;
-        }
-      }
-    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+}

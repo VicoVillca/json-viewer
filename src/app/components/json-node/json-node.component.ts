@@ -11,15 +11,12 @@ import { JsonNode } from '../../../core/models/code-block.model';
 })
 export class JsonNodeComponent {
   @Input() node!: JsonNode;
-  @Output() toggle = new EventEmitter<void>();
+  @Output() toggle = new EventEmitter<JsonNode>();
 
-  toggleNode() {
+  onNodeClick(event: MouseEvent) {
+    event.stopPropagation();
     if (this.node.type === 'object' || this.node.type === 'array') {
-      this.toggle.emit();
+      this.toggle.emit(this.node);
     }
-  }
-
-  onChildToggle(child: JsonNode) {
-    this.toggle.emit();
   }
 }

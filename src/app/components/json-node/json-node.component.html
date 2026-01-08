@@ -2,9 +2,8 @@
   
   <div class="node-line" 
        [class.expandable]="node.type === 'object' || node.type === 'array'"
-       (click)="toggleNode()">
+       (click)="onNodeClick($event)">
     
-    <!-- Ícono para objetos/arrays -->
     <span class="toggle-icon" *ngIf="node.type === 'object' || node.type === 'array'">
       <i class="pi" 
          [class.pi-chevron-right]="!node.expanded" 
@@ -12,36 +11,53 @@
       </i>
     </span>
     
-    <!-- Clave -->
     <span class="node-key" *ngIf="node.key !== ''">
       {{ node.key }}:
     </span>
     
-    <!-- Valor -->
     <span class="node-value" [class]="node.type + '-value'">
       <ng-container [ngSwitch]="node.type">
         <span *ngSwitchCase="'string'">"{{ node.value }}"</span>
+        
         <span *ngSwitchCase="'number'">{{ node.value }}</span>
+        
         <span *ngSwitchCase="'boolean'">{{ node.value }}</span>
+        
         <span *ngSwitchCase="'null'">null</span>
+        
         <span *ngSwitchCase="'object'">
           {{ node.expanded ? '{' : '{...}' }}
         </span>
+        
         <span *ngSwitchCase="'array'">
           {{ node.expanded ? '[' : '[...]' }}
         </span>
       </ng-container>
+      
+      <span *ngIf="!node.expanded && node.children && node.children.length > 0" 
+            class="item-count">
+        {{ node.children.length }} {{ node.children.length === 1 ? 'item' : 'items' }}
+      </span>
     </span>
     
   </div>
   
-  <!-- Hijos -->
-  <div class="node-children" *ngIf="node.expanded && node.children">
-    <app-json-node 
-      *ngFor="let child of node.children"
-      [node]="child"
-      (toggle)="onChildToggle(child)">
-    </app-json-node>
+  <div *ngIf="node.expanded">
+    
+    <div class="node-children" *ngIf="node.children">
+      <app-json-node 
+        *ngFor="let child of node.children"
+        [node]="child"
+        (toggle)="toggle.emit($event)">
+      </app-json-node>
+    </div>
+    
+    <div class="node-closure">
+      <span class="closure-brace">
+        {{ node.type === 'array' ? ']' : '}' }}
+      </span>
+    </div>
+    
   </div>
   
 </div>

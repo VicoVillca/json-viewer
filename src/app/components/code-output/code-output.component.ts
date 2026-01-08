@@ -16,6 +16,8 @@ export class CodeOutputComponent implements OnChanges {
   
   parsedJson: any = null;
   jsonTree: JsonNode[] = [];
+  rootType: 'object' | 'array' = 'object';
+  rootExpanded = false;
   message = messages;
 
   ngOnChanges(changes: SimpleChanges) {
@@ -25,11 +27,16 @@ export class CodeOutputComponent implements OnChanges {
   }
 
   processJson() {
-    if (!this.result?.organizedCode) return;
-
+    if (!this.result?.organizedCode) {
+      return;
+    }
+    
     try {
       this.parsedJson = JSON.parse(this.result.organizedCode);
+      this.rootType = Array.isArray(this.parsedJson) ? 'array' : 'object';
+      this.rootExpanded = false;
       this.jsonTree = this.buildJsonTree(this.parsedJson);
+      
     } catch (error) {
       this.parsedJson = null;
       this.jsonTree = [];
@@ -51,7 +58,7 @@ export class CodeOutputComponent implements OnChanges {
           key: isArray ? index.toString() : k,
           value: value,
           type: type,
-          expanded: level < 2,
+          expanded: false,
           level: level,
           children: undefined
         };
@@ -75,8 +82,14 @@ export class CodeOutputComponent implements OnChanges {
   }
 
   toggleNode(node: JsonNode) {
-    if (node.type === 'object' || node.type === 'array') {
+    
+    if (node && (node.type === 'object' || node.type === 'array')) {
       node.expanded = !node.expanded;
+      this.jsonTree = [...this.jsonTree];
     }
+  }
+
+  toggleRoot() {
+    this.rootExpanded = !this.rootExpanded;
   }
 }

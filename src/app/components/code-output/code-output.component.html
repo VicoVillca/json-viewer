@@ -1,22 +1,45 @@
 <div class="code-output">
   
-  <!-- Solo un contenedor de scroll -->
   <div class="json-scroll-container">
-    
-    <div *ngIf="result && parsedJson && jsonTree.length > 0">
-      <div class="json-tree">
+
+    <div *ngIf="result && parsedJson && jsonTree.length > 0" class="json-root">
+
+      <div class="json-header" (click)="toggleRoot()">
+        <i class="pi" [class.pi-chevron-right]="!rootExpanded" [class.pi-chevron-down]="rootExpanded"></i>
+        <span class="json-type">JSON</span>
+        <span class="json-brace">{{ rootType === 'array' ? '[' : '{' }}</span>
+        
+        <span *ngIf="!rootExpanded" class="item-count">
+          {{ jsonTree.length }} {{ rootType === 'array' ? 'items' : 'keys' }}
+        </span>
+        
+        <span *ngIf="!rootExpanded" class="json-brace">
+          {{ rootType === 'array' ? ']' : '}' }}
+        </span>
+      </div>
+      
+      <div class="json-body" *ngIf="rootExpanded">
         <div *ngFor="let node of jsonTree" class="node-wrapper">
           <app-json-node 
             [node]="node"
-            (toggle)="toggleNode(node)">
+            (toggle)="toggleNode($event)">
           </app-json-node>
         </div>
+        
+        <div class="json-footer">
+          <span class="json-brace">{{ rootType === 'array' ? ']' : '}' }}</span>
+        </div>
       </div>
+      
     </div>
     
-    <div *ngIf="!result" class="empty-output">
-      <i class="pi pi-code"></i>
-      <p>Procesa código para ver el resultado</p>
+    <div *ngIf="result && (!parsedJson || jsonTree.length === 0)" class="raw-fallback">
+      <pre><code>{{ result.organizedCode }}</code></pre>
+    </div>
+    
+    <div *ngIf="!result" class="empty-state">
+      <i class="pi pi-inbox"></i>
+      <p>{{message.mensajeInstrucciones}}</p>
     </div>
     
   </div>
